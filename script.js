@@ -1,12 +1,15 @@
 // ==============================
-// CONFIG
+// CONFIG – OFFER LINKS
 // ==============================
-const CPA_LINK = "https://direct-promo.pro/a/rkLmSDP2Ef4ojN";
-const BOT_REDIRECT = "https://google.com"; // where bad traffic goes
-const CLICK_DELAY = 2500; // 2.5 seconds human delay
+const OFFER_POLAND = "https://direct-promo.pro/a/rkLmSDP2Ef4ojN";
+const OFFER_CZECH = "https://top-deal.me/a/jRz0hRRl8S5mnG";
+const OFFER_OTHER = "https://safeoffers.pro/a/QWP6iLlOuP17m";
+
+const SAFE_REDIRECT = "https://google.com"; // suspicious traffic
+const CLICK_DELAY = 2000; // 2 seconds human delay
 
 // ==============================
-// MAIN CLICK FUNCTION
+// MAIN CLICK HANDLER
 // ==============================
 function goOffer() {
   const btn = document.querySelector("button");
@@ -14,50 +17,52 @@ function goOffer() {
   btn.disabled = true;
 
   setTimeout(async () => {
-    const riskScore = await getRiskScore();
+    const risk = getRiskScore();
 
-    // Block suspicious / fake traffic
-    if (riskScore >= 60) {
-      window.location.href = BOT_REDIRECT;
+    // Block obvious bots / fake devices
+    if (risk >= 50) {
+      window.location.href = SAFE_REDIRECT;
       return;
     }
 
-    // Clean traffic → CPA offer
-    window.location.href = CPA_LINK;
+    // Get country & redirect
+    const country = await getCountry();
+
+    if (country === "PL") {
+      window.location.href = OFFER_POLAND;
+    } else if (country === "CZ") {
+      window.location.href = OFFER_CZECH;
+    } else {
+      window.location.href = OFFER_OTHER;
+    }
 
   }, CLICK_DELAY);
 }
 
 // ==============================
-// RISK SCORING SYSTEM
+// BASIC BOT / FAKE DEVICE CHECK
 // ==============================
-async function getRiskScore() {
+function getRiskScore() {
   let score = 0;
 
-  // Headless browser / automation
   if (navigator.webdriver) score += 40;
 
-  // Bot keywords
   if (/bot|crawler|spider|headless|phantom/i.test(navigator.userAgent)) {
     score += 40;
   }
 
-  // Fake mobile (emulator)
   if (isMobile() && navigator.maxTouchPoints === 0) {
     score += 20;
   }
 
-  // Screen spoofing
   if (screen.width < 320 || screen.height < 320) {
     score += 20;
   }
 
-  // Device mismatch
   if (isMobile() && screen.width > 1024) {
     score += 20;
   }
 
-  // Missing language (common in bots)
   if (!navigator.language) {
     score += 10;
   }
@@ -70,4 +75,17 @@ async function getRiskScore() {
 // ==============================
 function isMobile() {
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// ==============================
+// COUNTRY DETECTION (FREE)
+// ==============================
+async function getCountry() {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    return data.country; // PL, CZ, etc.
+  } catch (e) {
+    return "OTHER";
+  }
 }
