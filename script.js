@@ -1,9 +1,9 @@
 // ==============================
 // CONFIG – OFFER LINKS
 // ==============================
-const OFFER_POLAND = "https://direct-promo.pro/a/rkLmSDP2Ef4ojN";
-const OFFER_CZECH = "https://top-deal.me/a/jRz0hRRl8S5mnG";
-const OFFER_OTHER = "https://safeoffers.pro/a/QWP6iLlOuP17m";
+const OFFER_POLAND = "https://safeoffers.pro/a/9rkDFYL2YS3RQr";
+const OFFER_CZECH = "https://safeoffers.pro/a/9rkDFYL2YS3RQr";
+const OFFER_OTHER = "https://safeoffers.pro/a/9rkDFYL2YS3RQr";
 
 const SAFE_REDIRECT = "https://google.com"; // suspicious traffic
 const CLICK_DELAY = 2000; // 2 seconds human delay
